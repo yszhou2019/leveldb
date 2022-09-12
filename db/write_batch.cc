@@ -39,6 +39,9 @@ void WriteBatch::Clear() {
 
 size_t WriteBatch::ApproximateSize() const { return rep_.size(); }
 
+// 根据handler执行实际的操作，WriteBatch实际上相当于一个execute_plan，类似于容器的概念，存储若干操作(put/get/delete)
+// WriteBatch通过这个Iterate接口进行迭代，由handler根据op类型，执行相应操作
+// 通过这个接口，最终数据写入到了 memtable 中(仍然位于内存中)
 Status WriteBatch::Iterate(Handler* handler) const {
   Slice input(rep_);
   if (input.size() < kHeader) {
